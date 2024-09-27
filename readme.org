@@ -1,0 +1,5 @@
+* schuttemacs
+
+emacs starter + LSP + evil
+
+[[file:./screenshot.png]]

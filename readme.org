@@ -1,5 +1,5 @@
 * schuttemacs
 
-emacs starter + LSP + evil
+emacs starter + LSP +schuttemacsschuttemacs evil + some nice defaults
 
 [[file:./screenshot.png]]

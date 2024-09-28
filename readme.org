@@ -1,5 +1,214 @@
-* schuttemacs
-
-emacs starter + LSP + evil + some nice defaults
+emacs starter + LSP +schuttemacsschuttemacs evil + some nice defaults
 
 [[file:./screenshot.png]]
+
+* how I think about emacs
+
+If =vim+vimscript= (or even =nvim+lua=) is:
+
+#+begin_quote
+Design an editing model, and an editor, and then put a programming
+language on top so you can automate cool stuff in the editor!
+#+end_quote
+
+then =emacs= is:
+
+#+begin_quote
+Design a LISP machine with "text buffer" as a primitive type, and then
+build cool applications on top (most of which are text-editor shaped)!
+#+end_quote
+
+** living process
+
+all extensible editors have this to some extent, but ~emacs~ in
+particular to me feels much closer to a Ruby or Node process, where
+/modes/ ("apps" almost) are running based on events from buffers.
+
+So, =dired= (the file editor) or =edraw= (an svg editor) etc don't
+feel out of place, because they're built on the concept of "an app
+running on a buffer".
+
+Additionally, they're not special; if you're sitting in the same Ruby
+or Node or emacs process, you expect you'll be able to get into a
+repl, call functions, redefine them, etc, and =emacs= does that.
+
+this is why I 🫀 =emacs=.
+
+** whence configuration?
+
+in this case then, "configuration" means /managing the runtime
+environment in which all these *modes* run/;
+
+- installing packages
+  - which is just like npm or bundler, making libs available
+    - (nb; autoload, using =use-package= to do things at load time)
+- configuring runtime variables
+- configuring callback functions
+  - as keybinds, possibly attached to specific modes
+  - or as hooks, being called by a package in response to an event
+
+* links for getting started
+
+- [[https://emacsdocs.org/][Emacs Docs]] someone recently reformatted a bunch of the emacs manuals
+  into nice webpages. It's surprisingly good! And you can search the
+  same content with ~C-h r~ (and the other manuals with ~C-h i~)
+
+- [[https://www.masteringemacs.org/article/beginners-guide-to-emacs][Mastering Emacs; Beginner's Guide]] is a great tutorial on emacs
+  - the book is also highly recommended, happy to let you borrow!
+
+- [[https://systemcrafters.net/emacs-essentials/][System Crafters; Emacs Essentials]] is a _wonderful_ video series
+  - they have a bunch of free and also paid video courses on emacs
+
+- [[https://evil.readthedocs.io/en/latest/][=evil-mode=]] is the =vim= keybinds package, and worth reading into
+
+- I also find a lot of value in reading folks' blogs and reddit for
+  emacs, just because I often end up finding cool things I hadn't
+  heard about
+
+  - https://www.reddit.com/r/emacs/
+  - https://planet.emacslife.com/
+  - https://sachachua.com/blog/category/emacs-news/
+
+* what's in this configuration?
+
+- better defaults /all of which should already be the defaults in my
+  opinion.../
+  - =which-key= shows popup help when =emacs= is waiting for a key
+  - =no-littering= to keep =~/.emacs.d/= somewhat clean
+  - etc.
+
+- nicer out of the box UI
+  - =modus= and =ef= theme packages by [[https://protesilaos.com/emacs/][Protesilaos Stavrou]]
+    - which should also be in core
+  - =vertico= and =marginalia= for nice minibuffer display
+  - =corfu= for nice completion popups
+  - =orderless= for nice completion search
+
+- =vim= bindings through =evil-mode=
+  - only enabled in text and programming modes
+  - includes =commentary= and =surround= plugins
+
+- LSP + Tree Sitter in editing modes
+  - out of the box support for lots of syntaxes
+  - out of the box support for tons of different language servers
+
+- Magit, the best git porcelean there is
+- Eat, a pretty rad teminal emulator
+
+* how to use
+
+- clone to =~/.emacs.d/=
+- run emacs
+
+the first time it'll take a while because it'll download and install a
+bunch of packages
+
+** keybindings
+
+Note that if emacs is waiting for a key, it'll popup a help buffer
+with the possible continuation options; this is provided by
+=which-key-mode= and is a _huge_ boon to discoverability.
+
+When discussing a "base keymap" below, I mean that you can press the
+given keys, and see the options popup...
+
+Almost all keybindings are the defaults, with some additional ones
+set; just because I list it here does _not_ mean that it's not a
+default binding, just that I think it's useful for a first timer to
+see these in particular listed out.
+
+Also, =evil-local-mode= is enabled by default for =prog-mode= and
+=text-mode= buffers.  basically, think of it as "you can use vim binds
+when editing what emacs thinks is text".
+
+*** you could actually get by with nothing but these but it would suck
+
+- ~C-g~ :: cancel whatever is happening in the minibuffer
+
+  if you get stuck, you should be able to just spam ~C-g~ to get input
+  back into a known state
+
+- ~M-x~ :: bring up command prompt, with autocomplete
+
+  use this to call interactive functions, whether bound to a key or not.
+
+  - eg. ~M-x find-file~ will open a file in a new buffer
+  - eg. ~M-x revert-buffer~ will reset the current buffer to whatever's on disk
+  - eg. ~M-x kill-current-buffer~ will destroy the current buffer
+
+- ~C-h~ :: base keymap for help commands
+
+  help in emacs is surprisingly good! use it!
+
+  - ~C-h r~ :: read the emacs manual
+  - ~C-h i~ :: peruse all the various manuals, including those from
+    installed packages
+
+  - ~C-h a~ :: search for commands
+  - ~C-h f~ :: see documentation for a function
+  - ~C-h v~ :: see documentation for a variable
+
+*** basic navigation
+
+- ~C-x C-f~ :: find a file (open it in a buffer)
+- ~C-x C-b~ :: switch to an already open buffer
+- ~C-x C-s~ :: save the current buffer
+- ~C-x C-c~ :: will quit
+
+*** project level navigation
+
+The =project.el= package built-in to emacs defines a project as a
+VC-backed directory, though we also configure it to consider
+=package.json= and =Gemfile=.
+
+It lets you do a bunch of things scoped to just buffers/files/windows
+in that project.
+
+~C-x p~ is base keybinding for project-wide commands
+
+- ~C-x p f~ :: find a file in the current project
+- ~C-x p b~ :: find a buffer in the current project
+- ~C-x p m~ :: open magit for the project *custom*
+- ~C-x p t~ :: open an eat terminal for the project *custom*
+
+*** window & frame management
+
+In emacs a "frame" is what we'd call a "window" elsewhere and a
+"window" is what we'd call a "pane" elsewhere.
+
+Frames display windows display buffers.
+
+- ~C-x 0~ :: delete the current window
+- ~C-x 1~ :: make the current window the only one by deleting other windows
+- ~C-x 2~ :: split window horizontally
+- ~C-x 3~ :: split window vertically
+- ~C-x 4~ :: "new window" base keymap
+  - the next command will run in a new window
+  - eg. ~C-x 4 f~ will find-file into a new window
+- ~C-x 5~ :: "new frame" base keymap
+  - the next command will run in a new frame (OS-level window)
+  - eg. ~C-x 5 f~ will find-file into a new frame
+
+** tips for effective emacsing
+
+- use the help system
+- remember, you can almost always just restart to fix a problem
+
+*** =*scratch*= is your repl
+
+The =*scratch*= buffer is designed to be a place to jot notes, but
+_also_ a place to execute arbitrary elisp code. Emacs is actually a
+pretty good calculator, and general programming language!
+
+eg. don't bother opening up a node repl to divide some numbers, do it
+in the scratch buffer with elisp instead!
+
+- switch to scratch buffer ~C-x b~/=*scra=
+- type out
+  #+begin_src emacs-lisp
+  (/ 34.0 35.2)
+  #+end_src
+- with your cursor at the last paren, evaluate with ~C-x C-e~
+- answer will show up in the echo area on the bottom of the screen!
+
+and the api is pretty rich for file-system stuff, http, etc.

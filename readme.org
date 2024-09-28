@@ -49,17 +49,32 @@ environment in which all these *modes* run/;
 
 * links for getting started
 
-- [[https://emacsdocs.org/][Emacs Docs]] someone recently reformatted a bunch of the emacs manuals
-  into nice webpages. It's surprisingly good! And you can search the
-  same content with ~C-h r~ (and the other manuals with ~C-h i~)
+- [[https://emacsdocs.org/][Emacs Docs]]
+
+  Someone recently reformatted a bunch of the emacs manuals into nice
+  webpages. It's surprisingly good! And you can search the same
+  content with ~C-h r~ (and the other manuals with ~C-h i~)
 
 - [[https://www.masteringemacs.org/article/beginners-guide-to-emacs][Mastering Emacs; Beginner's Guide]] is a great tutorial on emacs
-  - the book is also highly recommended, happy to let you borrow!
+
+  The book is also highly recommended, happy to let you borrow!
 
 - [[https://systemcrafters.net/emacs-essentials/][System Crafters; Emacs Essentials]] is a _wonderful_ video series
-  - they have a bunch of free and also paid video courses on emacs
 
-- [[https://evil.readthedocs.io/en/latest/][=evil-mode=]] is the =vim= keybinds package, and worth reading into
+  System Crafters has a bunch of other great free and also paid video
+  courses on emacs too.
+
+- [[https://evil.readthedocs.io/en/latest/][=evil-mode=]] is the =vim= keybinds package, and worth reading docs for.
+
+  Generally everything just _works_, but there are some cool additional
+  features, and caveats worth reading into.
+
+- [[https://magit.vc/screenshots/][Magit! A visual walk-through]] takes you through using =magit= to do
+  git stuff.
+
+  It's an amazing package. For a while I had switched to VS Code
+  because the LSP support was so much better, but I still used emacs
+  for git, because =magit= is that good.
 
 - I also find a lot of value in reading folks' blogs and reddit for
   emacs, just because I often end up finding cool things I hadn't
@@ -81,7 +96,7 @@ environment in which all these *modes* run/;
   - =vertico= and =marginalia= for nice minibuffer display
   - =corfu= for nice completion popups
   - =orderless= for nice completion search
-  - =modus= and =ef= theme packages by [[https://protesilaos.com/emacs/][Protesilaos Stavrou]]
+  - [[https://protesilaos.com/emacs/modus-themes-pictures][modus]] and [[https://protesilaos.com/emacs/ef-themes-pictures][ef]] theme packages by [[https://protesilaos.com/emacs/][Protesilaos Stavrou]]
     - which should also be in core
     - change themes with ~M-x customize-themes~
 
@@ -93,8 +108,8 @@ environment in which all these *modes* run/;
   - out of the box support for lots of syntaxes
   - out of the box support for tons of different language servers
 
-- Magit, the best git porcelean there is
-- Eat, a pretty rad teminal emulator
+- Magit, the best git porcelain there is
+- Eat, a pretty rad terminal emulator
 
 * how to use
 

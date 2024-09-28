@@ -83,6 +83,19 @@
 (use-package exec-path-from-shell
   :config (exec-path-from-shell-initialize))
 
+;; keep the *scratch* buffer around, and in fact back it up
+;; this way scratch can be a useful note pad, rather than disappearing "randomly"
+(use-package remember
+  :config
+  (setq remember-data-file (schutte/emacsd "scratch-data"))
+  (setq remember-notes-buffer-name "*scratch*")
+  ;; make sure the initial scratch buffer is the notes buffer
+  ;; that way it sticks around going forward too
+  (setq initial-buffer-choice
+	(lambda ()
+	  (kill-buffer remember-notes-buffer-name)
+	  (remember-notes))))
+
 ;; allow zooming globally
 (use-package default-text-scale
   :config (default-text-scale-mode))
@@ -128,6 +141,10 @@
 ;; adds better syntax highlighting to dired buffers
 (use-package diredfl)
 
+;; compilation buffers should get ansi color chars
+(use-package ansi-color
+  :hook (compilation-filter-hook . ansi-color-compilation-filter))
+
 
 ;; ---------------
 ;; next up, make it a great code oditor
@@ -145,8 +162,12 @@
 ;; attempt to automatically install a grammar when opening a file that
 ;; has a treesit mode but no installed grammar.
 
-(use-package lsp-ui
-  :hook (prog-mode . lsp))
+(use-package lsp-mode
+  :hook (prog-mode . lsp)
+  :config
+  (setq lsp-warn-no-matched-clients nil))
+
+(use-package lsp-ui)
 
 (use-package treesit-auto
   :custom
@@ -224,8 +245,8 @@
      default))
  '(default-frame-alist '((ns-transparent-titlebar . t)))
  '(package-selected-packages nil)
- '(spacious-padding-mode t)
  '(scroll-bar-mode nil)
+ '(spacious-padding-mode t)
  '(tool-bar-mode nil))
 
 (put 'dired-find-alternate-file 'disabled nil)

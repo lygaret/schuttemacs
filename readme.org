@@ -1,4 +1,4 @@
-emacs starter + LSP +schuttemacsschuttemacs evil + some nice defaults
+emacs starter + evil + LSP/Treesitter + some nice defaults
 
 [[file:./screenshot.png]]
 
@@ -205,7 +205,7 @@ pretty good calculator, and general programming language!
 eg. don't bother opening up a node repl to divide some numbers, do it
 in the scratch buffer with elisp instead!
 
-- switch to scratch buffer ~C-x b~/=*scra=
+- switch to scratch buffer ~C-x b~ then search for =*scratch*=
 - type out
   #+begin_src emacs-lisp
   (/ 34.0 35.2)

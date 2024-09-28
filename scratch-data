@@ -1,4 +1,15 @@
 home sweet home 🛸
 
+;; this file will be saved on changes
+
+;; C-j evaluates the lisp at point, and prints it out
+
 (upcase "you can run elisp here")
 "YOU CAN RUN ELISP HERE"
+
+;; C-x C-e evaluates without printing
+;; useful for interactive commands
+
+(info "Elisp") ;; open the programming manual
+
+;; now you...

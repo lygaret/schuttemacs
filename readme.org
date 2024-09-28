@@ -90,6 +90,7 @@ environment in which all these *modes* run/;
   opinion.../
   - =which-key= shows popup help when =emacs= is waiting for a key
   - =no-littering= to keep =~/.emacs.d/= somewhat clean
+  - persistent notes buffer that's kept around on start
   - etc.
 
 - nicer out of the box UI

@@ -78,11 +78,12 @@ environment in which all these *modes* run/;
   - etc.
 
 - nicer out of the box UI
-  - =modus= and =ef= theme packages by [[https://protesilaos.com/emacs/][Protesilaos Stavrou]]
-    - which should also be in core
   - =vertico= and =marginalia= for nice minibuffer display
   - =corfu= for nice completion popups
   - =orderless= for nice completion search
+  - =modus= and =ef= theme packages by [[https://protesilaos.com/emacs/][Protesilaos Stavrou]]
+    - which should also be in core
+    - change themes with ~M-x customize-themes~
 
 - =vim= bindings through =evil-mode=
   - only enabled in text and programming modes
@@ -135,6 +136,7 @@ when editing what emacs thinks is text".
   - eg. ~M-x find-file~ will open a file in a new buffer
   - eg. ~M-x revert-buffer~ will reset the current buffer to whatever's on disk
   - eg. ~M-x kill-current-buffer~ will destroy the current buffer
+  - eg. ~M-x customize~ will bring up the options-setting =customize= mode
 
 - ~C-h~ :: base keymap for help commands
 

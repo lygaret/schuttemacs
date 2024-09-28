@@ -1,34 +1,9 @@
+;; schutte-macs 🛸
+;; ---
 ;; ok here goes
-;;
-;; ---
-;;
-;; this file is _literally executed_ when emacs starts up
-;;
-;; important things emacs _is_:
-;;
-;; * a _mutable_ system, which _expects_ you to mutate it
-;;     - meaning defining a function, or changing a setting, or setting a keybinding _changes_ the _running_ system
-;;     - this is true in other editors too
-;;         - but you feel it often in emacs, imo
-;;     - eg; you can redefine any function, and in most cases, _lose the ability to reference the original_
-;;         - dealing with this is easy though, because restarting emacs starts from scratch
-;;             - see [the section about running as a server](#server) when things have settled
-;;
-;; what configuration means:
-;;
-;; - setting runtime variables
-;; - installing packages, and setting them up
-;; - defining callback functions
-;;     - either as keybinds
-;;     - or by hooking onto another function
-;;
 
-;; now set up the package manager
+;; first, set up the package manager
 ;; ---
-;;
-;; - 'package :: the built-in emacs library for managing packages
-;; - 'use-package :: the built-in macro for easy package installation
-;;     - basically lets you separate packages easily with lazy-loading
 
 (require 'package)
 (require 'use-package)
@@ -40,31 +15,13 @@
 ;; configurae the use-package macro to ensure the package is installed if missing
 (setq use-package-always-ensure t)
 
-;; also allow requiring files from the `site-lisp` directory
+;; and make sure we can load our own code too
 (add-to-list 'load-path (expand-file-name "site-lisp" user-emacs-directory))
-
-;; and bring in our runtime library of nice things
 (require 'schutte)
 
-;; by default, emacs packages dump temp files and such all over the place
-;; no-littering overrides a bunch of variables from a bunch of packages to clean it up
-;; and force files into semantically appropriate '/etc' and '/var' directories
 
-(use-package no-littering
-  :init
-  (setq no-littering-etc-directory (schutte/emacsd-etc))
-  (setq no-littering-var-directory (schutte/emacsd-var)))
-
-(setq auto-save-file-name-transforms
-      `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
-
-(setq backup-directory-alist
-      `(("." . ,(no-littering-expand-var-file-name "backups/"))))
-
-;; configure the editor now!
-;; ---
-;;
-;; let's start by setting some defaults
+;; ---------------
+;; now, set some defaults
 ;; imo, these should be the defaults everywhere
 
 ;; this one is just dumb
@@ -87,42 +44,33 @@
 ;; use the tab key for indent then completion
 (setq tab-always-indent 'complete)
 
-;; don't require a project to be a git dir
+;; by default, emacs packages dump temp files and such all over the place
+;; no-littering overrides a bunch of variables from a bunch of packages to clean it up
+;; and force files into semantically appropriate '/etc' and '/var' directories
+
+(use-package no-littering
+  :init
+  (setq no-littering-etc-directory (schutte/emacsd-etc))
+  (setq no-littering-var-directory (schutte/emacsd-var)))
+
+(setq auto-save-file-name-transforms
+      `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+
+(setq backup-directory-alist
+      `(("." . ,(no-littering-expand-var-file-name "backups/"))))
+
+;; by default, the project manager only considers VC-backed directory to be a project
+;; but we like having project stuff when there's just a package file too
+
 (require 'project)
 (add-to-list 'project-vc-extra-root-markers "requirements.txt")
 (add-to-list 'project-vc-extra-root-markers "package.json")
 (add-to-list 'project-vc-extra-root-markers "Gemfile")
 
-;; prettiness is nice
-;; two nice theme packs, find what you like with `M-x customize-themes`
-
-(use-package ef-themes)
-(use-package modus-themes)
-
-;; add some window padding; much less old-school feeling
-(use-package spacious-padding)
-
 ;; which-key shows a popup with info if emacs is waiting for another keystroke
 ;; improves discoverability 100000x
 (use-package which-key
   :config (which-key-mode))
-
-;; get nice vertical minibuffer completion
-(use-package vertico
-  :config (vertico-mode))
-
-(use-package marginalia
-  :config (marginalia-mode))
-
-(use-package corfu
-  :config (global-corfu-mode)
-  :init
-  (require 'corfu-popupinfo)
-  (corfu-popupinfo-mode))
-
-(use-package orderless
-  :custom
-  (completion-styles '(orderless initials basic)))
 
 ;; load editor configuration from project path
 (use-package editorconfig
@@ -143,25 +91,62 @@
 (use-package ws-butler
   :hook (prog-mode . ws-butler-mode))
 
-;; emacs core includes tree-sitter (for parsing from upstream grammars), and LSP,
-;; but the in-core LSP client is somewhat limited in features. (actually, it's just
-;; that it leaves UI up to existing emacs features, but they weren't designed together).
+
+;; ---------------
+;; next up, make it pretty
+;; generally, I want it close to defaults and relaxed
+
+;; change themes with M-x customize-themes
+(use-package ef-themes)
+(use-package modus-themes)
+
+;; add some window padding; much less old-school feeling
+(use-package spacious-padding)
+
+;; get nice vertical minibuffer completion
+(use-package vertico
+  :config (vertico-mode))
+
+;; add nice additional details to minibuffer completion candidates
+(use-package marginalia
+  :config (marginalia-mode))
+
+;; get popups for completion on tab (when the mode supports it, through LSP likely)
+(use-package corfu
+  :config
+  (global-corfu-mode)
+  :init
+  (require 'corfu-popupinfo)
+  (corfu-popupinfo-mode))
+
+;; make completion tolerant of different search styles
+;; in particular, match on chunks in any order, and allow searching by initials
+(use-package orderless
+  :custom
+  (completion-styles '(orderless initials basic)))
+
+;; adds better syntax highlighting to dired buffers
+(use-package diredfl)
+
+
+;; ---------------
+;; next up, make it a great code oditor
 ;;
-;; lsp-mode is an alternative, which we get transitively through lsp-ui, which provides
-;; a more vscode like experience out of the box
+;; emacs core includes tree-sitter (for parsing from upstream
+;; grammars), and LSP, but the in-core LSP client is somewhat limited
+;; in features. (actually, it's just that it leaves UI up to existing
+;; emacs features, but they weren't designed together).
+;;
+;; lsp-mode is an alternative, which we get transitively through
+;; lsp-ui, which provides a more vscode like experience out of the box
+;;
+;; tree-sitter is a library for building parsers, and these days
+;; powers most good programming syntax modes. treesit-auto will
+;; attempt to automatically install a grammar when opening a file that
+;; has a treesit mode but no installed grammar.
 
-(use-package evil
-  :hook ((prog-mode . evil-local-mode)
-	 (text-mode . evil-local-mode)
-	 (wdired-mode . evil-local-mode)))
-
-(use-package evil-commentary
-  :config (evil-commentary-mode))
-
-(use-package evil-surround
-  :config (global-evil-surround-mode))
-
-(use-package lsp-ui)
+(use-package lsp-ui
+  :hook (prog-mode . lsp))
 
 (use-package treesit-auto
   :custom
@@ -170,12 +155,47 @@
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
 
+;; polymode make emacs better able to handle modes with mixed syntax
+;; such as HTML+script+css, or ruby+SQL
 (use-package polymode)
 
-;; specific enhancements to specific functionality
 
-;; adds better syntax highlighting to dired buffers
-(use-package diredfl)
+;; ---------------
+;; next up, make it an e-vi-l editor
+;;
+;; evil-mode provides really good vim bindings; they are only enabled
+;; in text-editing modes though, because I find they conflict too much
+;; elsewhere.
+;;
+;; if you're interested in using them more fully, see
+;; ~evil-collection~ in the package list
+
+(use-package evil
+  :hook ((prog-mode . evil-local-mode)
+	 (text-mode . evil-local-mode)
+	 (wdired-mode . evil-local-mode)))
+
+;; comment motions
+(use-package evil-commentary
+  :config (evil-commentary-mode))
+
+;; change around/inside surrounding delimiters
+(use-package evil-surround
+  :config (global-evil-surround-mode))
+
+
+;; ---------------
+;; next up, install some other cool apps
+
+;; magit is the best git client you've ever used
+(use-package magit
+  :hook
+  ;; in the buffer showing git output, make URLS clickable
+  (magit-process-mode . goto-address-mode)
+
+  :bind
+  (:map project-prefix-map
+	("m" . magit-project-status)))
 
 ;; eat is a surprisingly good terminal emulator
 (use-package eat
@@ -186,21 +206,10 @@
   (:map project-prefix-map
 	("t" . eat-project-other-window)))
 
-;; magit is the best git client you've ever used
-(use-package magit
-  ;; in the buffer showing git output, auto-link URLS (so you can click github PR links)
-  :hook
-  (magit-process-mode . goto-address-mode)
 
-  :bind
-  (:map project-prefix-map
-	("m" . magit-project-status))
-
-  :config
-  (setq magit-clone-default-directory (schutte/homed "projects")))
-
-
-;; the custom variables below were set by the `customize` functionality
+;; ---------------
+;; lastly, these custom variables were set by the `customize` functionality
+;; be careful editing these by hand, and recognize that emacs will write to these when shutting down
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.

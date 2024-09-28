@@ -209,7 +209,10 @@ Frames display windows display buffers.
 
 ** tips for effective emacsing
 
-- use the help system
+- use the help system!
+- use the application menu!
+  - =emacs= has an insane amount of builtin functionality, almost all of 
+    which has a menu entry; just browse!
 - remember, you can almost always just restart to fix a problem
 
 *** =*scratch*= is your repl
